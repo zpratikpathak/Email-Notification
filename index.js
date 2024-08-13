@@ -31,21 +31,21 @@ const backupTransporter = nodemailer.createTransport({
 // Email sending function with retry logic
 async function sendEmailWithRetry(from, email, subject, text, retries = 0) {
   try {
+    const mailOptions = {
+      from: from,
+      to: email,
+      subject: subject,
+      text: text,
+      headers: {
+        "List-Unsubscribe": "<mailto:unsubscribe@example.com>",
+      },
+    };
+
     if (retries < 3) {
-      await primaryTransporter.sendMail({
-        from: from,
-        to: email,
-        subject: subject,
-        text: text,
-      });
+      await primaryTransporter.sendMail(mailOptions);
       console.log("Email sent successfully using primary service");
     } else {
-      await backupTransporter.sendMail({
-        from: from,
-        to: email,
-        subject: subject,
-        text: text,
-      });
+      await backupTransporter.sendMail(mailOptions);
       console.log("Email sent successfully using backup service");
     }
   } catch (error) {
@@ -76,6 +76,45 @@ app.post("/send-notification", async (req, res) => {
     console.error("Error sending notification:", error);
     res.status(500).json({ error: "Failed to send notification" });
   }
+});
+
+// API endpoint for handling bounces
+app.post("/handle-bounce", (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Missing email field" });
+  }
+
+  // Logic to handle bounce (e.g., mark email as bounced in the database)
+  console.log(`Bounce received for email: ${email}`);
+  res.status(200).json({ message: "Bounce handled successfully" });
+});
+
+// API endpoint for handling spam reports
+app.post("/handle-spam", (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Missing email field" });
+  }
+
+  // Logic to handle spam report (e.g., mark email as spam in the database)
+  console.log(`Spam report received for email: ${email}`);
+  res.status(200).json({ message: "Spam report handled successfully" });
+});
+
+// API endpoint for handling unsubscribe requests
+app.post("/unsubscribe", (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Missing email field" });
+  }
+
+  // Logic to handle unsubscribe (e.g., remove email from mailing list)
+  console.log(`Unsubscribe request received for email: ${email}`);
+  res.status(200).json({ message: "Unsubscribe handled successfully" });
 });
 
 app.listen(port, () => {
