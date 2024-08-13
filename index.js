@@ -10,7 +10,7 @@ app.use(express.json());
 // Email configuration
 const primaryTransporter = nodemailer.createTransport({
   host: process.env.PRIMARY_SMTP_HOST,
-  port: 587,
+  port: process.env.PRIMARY_SMTP_PORT,
   secure: false,
   auth: {
     user: process.env.PRIMARY_SMTP_USER,
@@ -20,7 +20,7 @@ const primaryTransporter = nodemailer.createTransport({
 
 const backupTransporter = nodemailer.createTransport({
   host: process.env.BACKUP_SMTP_HOST,
-  port: 587,
+  port: process.env.BACKUP_SMTP_PORT,
   secure: false,
   auth: {
     user: process.env.BACKUP_SMTP_USER,
