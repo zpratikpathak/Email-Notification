@@ -45,7 +45,13 @@
     <form id="notificationForm">
       <h2>Send Notification</h2>
       <label for="from">From:</label>
-      <input type="email" id="from" name="from" required />
+      <input
+        type="email"
+        id="from"
+        name="from"
+        value="no-reply@pratikpathak.com"
+        readonly
+      />
 
       <label for="email">To:</label>
       <input type="email" id="email" name="email" required />
@@ -90,6 +96,9 @@
         event.preventDefault();
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
+
+        // Hard code the "from" field
+        data.from = "no-reply@pratikpathak.com";
 
         try {
           const response = await fetch(endpoint, {
