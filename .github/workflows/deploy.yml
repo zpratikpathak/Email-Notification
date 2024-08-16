@@ -71,7 +71,7 @@ jobs:
           docker load < ~/home/emailnotification.tar          
           
           # Run the new container
-          docker run -d --restart always --name emailnotification -p 3000:3000 emailnotification:latest
+          docker run -d --restart always --name emailnotification -p 3005:3005 emailnotification:latest
 
           # Remove the emailnotification.tar file after loading and running the container
           rm -f ~/home/emailnotification.tar
