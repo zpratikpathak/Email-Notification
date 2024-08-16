@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notification Service</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      form {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .response {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Notification Service</h1>
+
+    <form id="notificationForm">
+      <h2>Send Notification</h2>
+      <label for="from">From:</label>
+      <input type="email" id="from" name="from" required />
+
+      <label for="email">To:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="subject">Subject:</label>
+      <input type="text" id="subject" name="subject" required />
+
+      <label for="text">Message:</label>
+      <textarea id="text" name="text" required></textarea>
+
+      <button type="submit">Send</button>
+    </form>
+
+    <form id="bounceForm">
+      <h2>Handle Bounce</h2>
+      <label for="bounceEmail">Email:</label>
+      <input type="email" id="bounceEmail" name="email" required />
+
+      <button type="submit">Handle Bounce</button>
+    </form>
+
+    <form id="spamForm">
+      <h2>Handle Spam Report</h2>
+      <label for="spamEmail">Email:</label>
+      <input type="email" id="spamEmail" name="email" required />
+
+      <button type="submit">Handle Spam</button>
+    </form>
+
+    <form id="unsubscribeForm">
+      <h2>Unsubscribe</h2>
+      <label for="unsubscribeEmail">Email:</label>
+      <input type="email" id="unsubscribeEmail" name="email" required />
+
+      <button type="submit">Unsubscribe</button>
+    </form>
+
+    <div id="response" class="response"></div>
+
+    <script>
+      async function handleFormSubmit(event, endpoint) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+          document.getElementById("response").innerText =
+            result.message || result.error;
+        } catch (error) {
+          document.getElementById("response").innerText =
+            "Error processing request";
+        }
+      }
+
+      document
+        .getElementById("notificationForm")
+        .addEventListener("submit", (event) =>
+          handleFormSubmit(event, "/send-notification")
+        );
+      document
+        .getElementById("bounceForm")
+        .addEventListener("submit", (event) =>
+          handleFormSubmit(event, "/handle-bounce")
+        );
+      document
+        .getElementById("spamForm")
+        .addEventListener("submit", (event) =>
+          handleFormSubmit(event, "/handle-spam")
+        );
+      document
+        .getElementById("unsubscribeForm")
+        .addEventListener("submit", (event) =>
+          handleFormSubmit(event, "/unsubscribe")
+        );
+    </script>
+  </body>
+</html>

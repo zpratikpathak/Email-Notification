@@ -12,6 +12,7 @@ RUN npm install --production
 
 # Copy the rest of the project files to the working directory
 COPY . .
+COPY .env .env
 
 # Expose a port (if your Node.js app listens on a specific port)
 EXPOSE 3000
