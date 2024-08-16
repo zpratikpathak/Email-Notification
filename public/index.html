@@ -37,6 +37,66 @@
         padding: 10px;
         border: 1px solid #ccc;
       }
+      .toast {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 2px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1;
+        left: 50%;
+        bottom: 30px;
+        font-size: 17px;
+      }
+      .toast.show {
+        visibility: visible;
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      }
+      @-webkit-keyframes fadein {
+        from {
+          bottom: 0;
+          opacity: 0;
+        }
+        to {
+          bottom: 30px;
+          opacity: 1;
+        }
+      }
+      @keyframes fadein {
+        from {
+          bottom: 0;
+          opacity: 0;
+        }
+        to {
+          bottom: 30px;
+          opacity: 1;
+        }
+      }
+      @-webkit-keyframes fadeout {
+        from {
+          bottom: 30px;
+          opacity: 1;
+        }
+        to {
+          bottom: 0;
+          opacity: 0;
+        }
+      }
+      @keyframes fadeout {
+        from {
+          bottom: 30px;
+          opacity: 1;
+        }
+        to {
+          bottom: 0;
+          opacity: 0;
+        }
+      }
     </style>
   </head>
   <body>
@@ -90,8 +150,17 @@
     </form>
 
     <div id="response" class="response"></div>
+    <div id="toast" class="toast">Email sent successfully!</div>
 
     <script>
+      function showToast() {
+        const toast = document.getElementById("toast");
+        toast.className = "toast show";
+        setTimeout(() => {
+          toast.className = toast.className.replace("show", "");
+        }, 3000);
+      }
+
       async function handleFormSubmit(event, endpoint) {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -112,6 +181,10 @@
           const result = await response.json();
           document.getElementById("response").innerText =
             result.message || result.error;
+
+          if (response.ok) {
+            showToast();
+          }
         } catch (error) {
           document.getElementById("response").innerText =
             "Error processing request";

@@ -16,10 +16,10 @@ jobs:
       run: echo "${{ secrets.ENVIRONMENTAL_VARIABLES }}" > .env
 
     - name: Build Docker image
-      run: docker build . -t emailNotification:latest
+      run: docker build . -t emailnotification:latest
 
     - name: Save Instance of Image
-      run: docker save emailNotification:latest > emailNotification.tar
+      run: docker save emailnotification:latest > emailnotification.tar
 
     - name: Remove old image file on server
       uses: appleboy/ssh-action@master
@@ -29,8 +29,8 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          if [ -f "~/home/emailNotification.tar" ]; then
-            rm -f ~/home/emailNotification.tar
+          if [ -f "~/home/emailnotification.tar" ]; then
+            rm -f ~/home/emailnotification.tar
           fi
 
           if [ ! -d "~/home" ]; then
@@ -44,7 +44,7 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
-        source: "emailNotification.tar"
+        source: "emailnotification.tar"
         target: "~/home/"
 
     - name: Load Docker image and run container on server
@@ -58,20 +58,20 @@ jobs:
 
           
           # Check if the container is running, stop and remove it if it is
-          if [ $(docker ps -q -f name=emailNotification) ]; then
-            docker stop emailNotification
-            docker rm emailNotification
+          if [ $(docker ps -q -f name=emailnotification) ]; then
+            docker stop emailnotification
+            docker rm emailnotification
           # Check if the container exists (but is stopped), remove it if it does
-          elif [ $(docker ps -aq -f status=exited -f name=emailNotification) ]; then
-            docker rm emailNotification
+          elif [ $(docker ps -aq -f status=exited -f name=emailnotification) ]; then
+            docker rm emailnotification
           fi
 
           # Remove any existing image with the same name before loading a new one
-          docker image inspect emailNotification:latest > /dev/null 2>&1 && docker image rm emailNotification:latest
-          docker load < ~/home/emailNotification.tar          
+          docker image inspect emailnotification:latest > /dev/null 2>&1 && docker image rm emailnotification:latest
+          docker load < ~/home/emailnotification.tar          
           
           # Run the new container
-          docker run -d --restart always --name emailNotification -p 3000:3000 emailNotification:latest
+          docker run -d --restart always --name emailnotification -p 3000:3000 emailnotification:latest
 
-          # Remove the emailNotification.tar file after loading and running the container
-          rm -f ~/home/emailNotification.tar
+          # Remove the emailnotification.tar file after loading and running the container
+          rm -f ~/home/emailnotification.tar
